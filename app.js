@@ -2,7 +2,7 @@
 // create later
 
 // Item Controller
-const ItemCtrl = (function(){
+const Item = (function(){
 	// Item Constructor
 	const Item = function(id, name, calories){
 		this.id = id
