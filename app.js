@@ -24,6 +24,21 @@ const ItemCtrl = (function(){
 		getItems: function(){
 			return data.items
 		},
+		addItem: function(name, calories){
+			let ID;
+			// create ID
+			if(data.items.length > 0){
+				ID = data.items[data.items.length -1].id + 1
+			}else {
+				ID = 0
+			}
+			// parse calories into int
+			calories = parseInt(calories)
+			newItem = new Item(ID, name, calories)
+			// add item to data items
+			data.items.push(newItem)
+			return newItem
+		},
 		logData: function(){
 			return data
 		}
@@ -33,6 +48,12 @@ const ItemCtrl = (function(){
 
 // UI Controller
 const UICtrl = (function(){
+	// UI selectors
+	const UISelectors = {
+		itemNameInput: "#item-name",
+		itemCaloriesInput: "#item-calories",
+		addBtn: ".add-btn"
+	}
 	return {
 		populateItemList: function(items){
 			// create html content
@@ -50,6 +71,15 @@ const UICtrl = (function(){
 
 			// insert list items
 			document.querySelector("#item-list").innerHTML = html;
+		},
+		getItemInput: function(){
+			return {
+				name: document.querySelector(UISelectors.itemNameInput).value,
+				calories: document.querySelector(UISelectors.itemCaloriesInput).value
+			}
+		},
+		getSelectors: function(){
+			return UISelectors
 		}
 	}
 })();
@@ -57,12 +87,35 @@ const UICtrl = (function(){
 
 // App Controller
 const App = (function(ItemCtrl, UICtrl){
+	// load event listeners
+	const loadEventListeners = function(){
+		// Get UI Selectors
+		const UISelectors = UICtrl.getSelectors()
+		console.log(UISelectors)
+		// add item event
+		document.querySelector(UISelectors.addBtn)
+			.addEventListener("click", itemAddSubmit)
+	}
+	// add item submit
+	const itemAddSubmit = function(e){
+		// get form input from UI controller
+		const input = UICtrl.getItemInput()
+		// check name and calorie input
+		if(input.name !== "" && input.calories !== ""){
+			const newItem = ItemCtrl.addItem(input.name, input.calories)
+			console.log(newItem)
+		}
+
+		event.preventDefault()
+	}
 	return {
 		init: function(){
 			console.log("initializing App")
 			const items = ItemCtrl.getItems()
 			console.log(items)
 			UICtrl.populateItemList(items)
+			// load event listeners
+			loadEventListeners()
 		}
 	}
 })(ItemCtrl, UICtrl);
