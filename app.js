@@ -77,9 +77,8 @@ const ItemCtrl = (function(){
 			data.items.forEach(function(item){
 				total = total + item.calories;
 			});
-			// set toal calories in data structure
+			// set total calories in data structure
 			data.total = total;
-			console.log(data.total)
 			// return total
 			return data.total;
 		},
@@ -190,6 +189,14 @@ const App = (function(ItemCtrl, StorageCtrl, UICtrl){
 	const getItemsFromStorage = function(){
 		// get items from storage
 		const items = StorageCtrl.getItemsFromStorage()
+		// set storage items to ItemCtrl data items
+		items.forEach(function(item){
+			ItemCtrl.addItem(item['name'], item['calories'])
+		})
+		// get total calories
+		const totalCalories = ItemCtrl.getTotalCalories();
+		// add total calories to UI
+		UICtrl.showTotalCalories(totalCalories);
 		// populate items list
 		UICtrl.populateItemList(items)
 	}
