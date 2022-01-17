@@ -1,3 +1,7 @@
+var testFun = function(){
+	console.log("jubpi tahaks")
+}
+
 // Storage Controller
 const StorageCtrl = (function(){
 	// public methods
@@ -28,6 +32,9 @@ const StorageCtrl = (function(){
 				items = JSON.parse(localStorage.getItem('items'));
 			}
 			return items;
+		},
+		clearLocalStorage: function(){
+			localStorage.clear();
 		}
 	}
 })();
@@ -96,7 +103,11 @@ const UICtrl = (function(){
 		itemList: '#item-list',
 		itemNameInput: '#item-name',
 		itemCaloriesInput: '#item-calories',
-		addBtn: '.add-btn',
+		addBtn: '#add-button',
+		updateBtn: '#update-button',
+		deleteBtn: '#delete-button',
+		backBtn: '#back-button',
+		clearAll: '#clear-all',
 		totalCalories: '.total-calories'
 	}
 
@@ -143,6 +154,27 @@ const UICtrl = (function(){
 			// insert item
 			document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend', li)
 		},
+		clearItemList: function(){
+			document.querySelector(UISelectors.itemList).innerHTML = ""
+			document.querySelector(UISelectors.totalCalories).textContent = "0"
+		},
+		openEditMenu: function(e){
+			document.querySelector(UISelectors.addBtn).style.display = "none";
+			document.querySelector(UISelectors.updateBtn).style.display = "";
+			document.querySelector(UISelectors.deleteBtn).style.display = "";
+			document.querySelector(UISelectors.backBtn).style.display = "";
+			e = e || window.event;
+    		var target = e.target || e.srcElement,
+        		text = target.textContent || target.innerText; 
+        	var trueTarget = target.parentElement.parentElement
+        	console.log(trueTarget)
+		},
+		closeEditMenu: function(){
+			document.querySelector(UISelectors.addBtn).style.display = "";
+			document.querySelector(UISelectors.updateBtn).style.display = "none";
+			document.querySelector(UISelectors.deleteBtn).style.display = "none";
+			document.querySelector(UISelectors.backBtn).style.display = "none";
+		},
 		clearInput: function(){
 			document.querySelector(UISelectors.itemNameInput).value = '';
 			document.querySelector(UISelectors.itemCaloriesInput).value = '';
@@ -160,6 +192,14 @@ const App = (function(ItemCtrl, StorageCtrl, UICtrl){
 	const loadEventListeners = function(){
 		// get UI selectors
 		const UISelectors = UICtrl.getSelectors()
+		// clear all event
+		document.querySelector(UISelectors.clearAll).addEventListener('click', () => {StorageCtrl.clearLocalStorage();
+		 UICtrl.clearItemList();
+		})
+		// edit item event
+		document.querySelector(UISelectors.itemList).addEventListener('click', UICtrl.openEditMenu);
+		// close edit menu event
+		document.querySelector(UISelectors.backBtn).addEventListener('click', UICtrl.closeEditMenu)
 		// add item event
 		document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit)
 		// add document reload event
